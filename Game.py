@@ -16,7 +16,6 @@ class Game:
         self.map = MapModel(size, self.player1)
         self.player1.setMap(self.map)
         self.drawer = MapDrawer(self.map, screen, squareSize)
-        
     
     def redraw(self, update = True):
         self.drawer.redraw(update)
@@ -30,7 +29,7 @@ class Game:
         
         keys = pygame.key.get_pressed()
         pressed = 0
-        tdirection = (0,9)
+        tdirection = (0,0)
         for key, direction in zip(KEYS, DIRECTIONS):
             if keys[key]:
                 pressed += 1

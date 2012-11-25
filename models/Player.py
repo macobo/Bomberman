@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from misc import *
+from math import trunc
 
 class Player:
     def __init__(self, tile):
@@ -9,6 +10,9 @@ class Player:
         self.speed = 0.005
         self.tile = tile
         self.direction = NORTH
+    
+    def setMap(self, mapModel):
+        self.map = mapModel
         
     def setPos(self, x, y):
         self.x = x
@@ -17,13 +21,15 @@ class Player:
     def getPos(self):
         return (self.x, self.y)
         
+    def getRoundCoordinate(self):
+        return (round(self.x), round(self.y))
+        
     def setMovement(self, vxy):
         self.vx, self.vy = vxy
     
     def move(self, t):
         """ Calculates new position of tile after t seconds of pause """
-        self.x += self.vx * t
-        self.y += self.vy * t
+        self.x, self.y = self.map.move(self, t)
         
     def setDirection(self, direction):
         x, y = direction
@@ -39,3 +45,9 @@ class Player:
         
     def __repr__(self):
         return str(self.getPos())
+        
+    @staticmethod
+    def round(x, y):
+        y = int(y) if y-trunc(y) < 0.2 else int(y)+1
+        x = round(x)
+        return x, y

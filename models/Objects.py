@@ -22,6 +22,7 @@ class Tile(object):
 
 class Rock(Tile):
     fragile = True
+    collectable = False
     symbol = "R"
     imagePath = os.path.join(tileFolder,"rock.png")
 
@@ -30,6 +31,7 @@ class Rock(Tile):
 
 class Beam(Tile):
     fragile = False
+    collectable = False
     symbol = "#"
     imagePath = os.path.join(tileFolder,"beam.png")
 
@@ -38,6 +40,7 @@ class Beam(Tile):
 
 class Floor(Tile):
     fragile = False
+    collectable = False
     imagePath = os.path.join(tileFolder,"floor.png")
     
 class TileConstructor(Tile):
