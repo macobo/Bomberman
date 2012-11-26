@@ -20,5 +20,5 @@ class Bomb(BombTile):
         return self.time >= self.EXPLODETIME
         
     def getImage(self, size):
-        mul = 0.4 + 0.6 * self.time / self.EXPLODETIME
+        mul = min(0.4 + 0.6 * self.time / self.EXPLODETIME,1.3)
         return BombTile.getImage(int(round(size * mul)))

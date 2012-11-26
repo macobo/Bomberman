@@ -3,7 +3,7 @@ from misc import *
 from Objects import ExplosionTile
 
 class Explosion(ExplosionTile):
-    EXPLOSIONTIME = 5
+    EXPLOSIONTIME = 700
     def __init__(self, bomb, map):
         x, y = bomb.getPos()
         self.affected = calculateAffected(x,y, map, bomb.radius)
@@ -17,7 +17,7 @@ class Explosion(ExplosionTile):
         return self.time > self.EXPLOSIONTIME
         
     def getImage(self, size):
-        mul = 0.4 + 0.6 * self.time / self.EXPLOSIONTIME
+        mul = min(1.5, 0.4 + 0.6 * self.time / self.EXPLOSIONTIME)
         return ExplosionTile.getImage(int(round(size * mul)))
 
 

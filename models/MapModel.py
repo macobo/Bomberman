@@ -79,8 +79,7 @@ class MapModel(object):
                 self.explode(bomb)
         for explosion in self.explosions[:]:
             if explosion.tick(t):
-                #...
-                pass
+                self.explosions.remove(explosion)
     
     def placeBomb(self, player):
         x, y = player.getRoundCoordinate()
@@ -99,7 +98,13 @@ class MapModel(object):
             del self.map[xy]
         # in with the new
         explosion = Explosion(bomb, self)
-        #affected = exp.getAffected()
+        affected = explosion.getAffected()
+        for xy in filter(self.map.has_key, affected):
+            self.map[xy] = filter(lambda x: x.ignoreBomb, self.map[xy])
+            if not self.map[xy]: del self.map[xy]
+        for xy in filter(self.playersAt, affected):
+            # TODO: blow up player            
+            pass
         self.explosions.append(explosion)
         
         
