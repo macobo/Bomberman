@@ -6,10 +6,11 @@ class Bomb(BombTile):
     ignoreBomb = True
     
     EXPLODETIME = 3000
-    def __init__(self, x, y, radius):
+    def __init__(self, x, y, player):
         self.x, self.y = x, y
-        self.radius = radius
+        self.radius = player.bombRadius
         self.time = 0
+        self.player = player
         
     def getPos(self):
         return self.x, self.y
@@ -22,3 +23,5 @@ class Bomb(BombTile):
     def getImage(self, size):
         mul = min(0.4 + 0.6 * self.time / self.EXPLODETIME,1.3)
         return BombTile.getImage(int(round(size * mul)))
+    
+    # TODO: inRange(player)

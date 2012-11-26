@@ -8,9 +8,9 @@ from misc import *
 tileFolder = os.path.join("resources","images","tiles")
 
 class Tile(object):
-    ignoreBomb = False
     fragile = False
     collectable = False
+    solid = True
     @classmethod
     def getImage(cls, size):
         if not hasattr(cls, "lastImage") or cls.lastSize != size:
@@ -23,6 +23,14 @@ class Tile(object):
         
     @staticmethod
     def canGoUnder(cls): return False
+    
+class Collectable(Tile):
+    fragile = False
+    collectable = True
+    solid = False
+    @staticmethod
+    def canGoUnder(cls): 
+        return cls.fragile and not isinstance(cls, Player)
 
 class Rock(Tile):
     fragile = True
@@ -81,13 +89,22 @@ class ExplosionTile(Tile):
 class Background(Tile):
     imagePath = os.path.join("resources","images","background.png")
     
+class Pepper(Collectable):
+    imagePath = os.path.join(tileFolder,"pepper.png")
+    @staticmethod
+    def amount(size): return 5
+    
+    @staticmethod
+    def collectBy(player):
+        player.bombRadius += 1
+    
     
 Player1 = Player(["p_1_up.png","p_1_down.png","p_1_right.png","p_1_left.png"])
 Player2 = Player(["p_2_up.png","p_2_down.png","p_2_right.png","p_2_left.png"])
     
 allObjects = [Rock, Beam, Floor]
 players = [Player1, Player2]
-placeable = [Rock, Beam]
+placeable = [Rock, Beam, Pepper]
 
 if __name__ == "__main__":
     print allObjects

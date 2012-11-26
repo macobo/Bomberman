@@ -4,12 +4,29 @@ from misc import *
 from math import trunc
 
 class Player:
+    DEADTIME = 3000
     def __init__(self, tile):
         self.x = self.y = 5
-        self.vx = self.vy = 0
-        self.speed = 0.005
         self.tile = tile
         self.direction = NORTH
+        self.reset()
+        
+    def reset(self):
+        self.vx = self.vy = 0
+        self.speed = 0.005
+        self.bombRadius = 3
+        self.bombs = 1
+        self.placed = 0
+        self.dead = False
+        
+    def canPlaceBomb(self):
+        return not self.dead and self.placed < self.bombs
+        
+    def placeBomb(self):
+        self.placed += 1
+    
+    def explode(self):
+        self.placed = min(1, self.placed-1) # can occur when dieing
     
     def setMap(self, mapModel):
         self.map = mapModel

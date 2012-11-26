@@ -28,6 +28,11 @@ class MapModel(object):
         for explosion in self.explosions:
             for xy in explosion.getAffected():
                 yield xy, explosion
+    
+    def remove(self, obj, xy):
+        self.map[xy].remove(obj)
+        if not self.map[xy]:
+            del self.map[xy]
         
     def _generateMap(self):
         self.map = defaultdict(list)
@@ -50,29 +55,23 @@ class MapModel(object):
             out.append(" ".join(s))
         return "\n\n".join(out)
         
-    def objectsAt(self, x, y):
+    def objectsAt(self, xy):
         """ Returns tiles for objects at coordinate x,y """
-        x, y = Player.round(x,y)
+        x, y = Player.round(*xy)
         return self.map[x,y] if (x,y) in self.map else None
         
     def playersAt(self, xy):
-        return filter(lambda p: p.getRoundPos()==xy, self.players)
-        
-    def move(self, player, t):
-        """ Tries to move player and returns new coordinates for it """
-        nx = inRange(player.x + player.vx * t, self.size-1)
-        ny = inRange(player.y + player.vy * t, self.size-1)
-        if self.objectsAt(nx, ny):
-            assert len(self.objectsAt(nx,ny)) == 1,  self.objectsAt(nx, ny)
-            # cannot step through
-            ox, oy = Player.round(nx, ny)
-            if abs(ox - nx) <= abs(ox - player.x) and abs(oy-ny) <= abs(oy-player.y):
-                return player.x, player.y
-        return nx, ny
+        return filter(lambda p: p.getRoundCoordinate()==xy, self.players)
         
     def update(self, t):
         for player in self.players:
             player.tick(t)
+            xy = player.getRoundCoordinate()
+            if xy not in self.map: continue
+            for collectable in filter(lambda x: x.collectable, self.map[xy]):
+                collectable.collectBy(player)
+                self.remove(collectable, xy)
+            
         for bomb in self.bombs[:]:
             if bomb.tick(t):
                 print "BOOM", bomb.time
@@ -80,27 +79,44 @@ class MapModel(object):
         for explosion in self.explosions[:]:
             if explosion.tick(t):
                 self.explosions.remove(explosion)
+        
+    def move(self, player, t):
+        """ Tries to move player and returns new coordinates for it """
+        nx = inRange(player.x + player.vx * t, self.size-1)
+        ny = inRange(player.y + player.vy * t, self.size-1)
+        cannotMove = bool(self.objectsAt((nx, ny)))
+        cannotMove = cannotMove and any(x.solid for x in self.objectsAt((nx, ny)))
+        # cannot step through
+        ox, oy = Player.round(nx, ny)
+        cannotMove = cannotMove and abs(ox - nx) <= abs(ox - player.x)
+        cannotMove = cannotMove and abs(oy-ny) <= abs(oy-player.y)
+        if cannotMove:
+            return player.x, player.y
+        return nx, ny
+        
+
     
     def placeBomb(self, player):
         x, y = player.getRoundCoordinate()
-        if (x,y) in self.map: return
-        bomb = Bomb(x, y, 3)
+        if (x,y) in self.map or not player.canPlaceBomb(): 
+            return
+        player.placeBomb()
+        bomb = Bomb(x, y, player)
         self.bombs.append(bomb)
         self.map[x,y].append(bomb)
-        print "Placed at ",x,y
+        print "Placed a bomb at ",x,y
+        
         
     def explode(self, bomb):
         # out with the old
         self.bombs.remove(bomb)
-        xy = bomb.getPos()
-        self.map[xy].remove(bomb)
-        if not self.map[xy]:
-            del self.map[xy]
+        self.remove(bomb, bomb.getPos())
+        bomb.player.explode()
         # in with the new
         explosion = Explosion(bomb, self)
         affected = explosion.getAffected()
         for xy in filter(self.map.has_key, affected):
-            self.map[xy] = filter(lambda x: x.ignoreBomb, self.map[xy])
+            self.map[xy] = filter(lambda x: not x.fragile, self.map[xy])
             if not self.map[xy]: del self.map[xy]
         for xy in filter(self.playersAt, affected):
             # TODO: blow up player            

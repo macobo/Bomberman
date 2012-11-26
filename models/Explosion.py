@@ -25,10 +25,10 @@ def calculateAffected(x, y, map, radius):
     " Calculates the (x,y) positions of affected squares "
     affected = set()
     for dx, dy in DIRECTIONS:
-        for i in range(radius):
-            objects = map.objectsAt(x + i*dx, y + i*dy)
-            if objects and not all(obj.ignoreBomb for obj in objects):
-                if all(obj.fragile for obj in objects):
+        for i in range(radius+1):
+            objects = map.objectsAt((x + i*dx, y + i*dy))
+            if objects and any(obj.solid for obj in objects):
+                if any(obj.fragile for obj in objects):
                     affected.add((x+i*dx, y+i*dy))
                 break
             affected.add((x+i*dx, y+i*dy))

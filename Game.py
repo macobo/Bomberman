@@ -55,7 +55,6 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((size*n, size*n))
     game = Game(screen, size, n)
     clock = pygame.time.Clock()
-    game.map.placeBomb(game.player1)
     while True:
         t = clock.tick(40)
         game.processEvents(t)
