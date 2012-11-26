@@ -26,7 +26,7 @@ class Player:
         self.placed += 1
     
     def explode(self):
-        self.placed = min(1, self.placed-1) # can occur when dieing
+        self.placed = min(1, self.placed-1) # can occur when you die
     
     def setMap(self, mapModel):
         self.map = mapModel

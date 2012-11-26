@@ -93,10 +93,17 @@ class Pepper(Collectable):
     imagePath = os.path.join(tileFolder,"pepper.png")
     @staticmethod
     def amount(size): return 5
-    
     @staticmethod
     def collectBy(player):
         player.bombRadius += 1
+        
+class BombBonus(Collectable):
+    imagePath = os.path.join(tileFolder,"bombBonus.png")
+    @staticmethod
+    def amount(size): return 5
+    @staticmethod
+    def collectBy(player):
+        player.bombs += 1
     
     
 Player1 = Player(["p_1_up.png","p_1_down.png","p_1_right.png","p_1_left.png"])
@@ -104,7 +111,7 @@ Player2 = Player(["p_2_up.png","p_2_down.png","p_2_right.png","p_2_left.png"])
     
 allObjects = [Rock, Beam, Floor]
 players = [Player1, Player2]
-placeable = [Rock, Beam, Pepper]
+placeable = [Rock, Beam, Pepper, BombBonus]
 
 if __name__ == "__main__":
     print allObjects
