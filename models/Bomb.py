@@ -1,0 +1,24 @@
+# -*- coding: utf-8 -*-
+
+from Objects import BombTile
+
+class Bomb(BombTile):
+    ignoreBomb = True
+    
+    EXPLODETIME = 3000
+    def __init__(self, x, y, radius):
+        self.x, self.y = x, y
+        self.radius = radius
+        self.time = 0
+        
+    def getPos(self):
+        return self.x, self.y
+        
+    def tick(self, t):
+        " Returns true if bomb is ready to explode "
+        self.time += t
+        return self.time >= self.EXPLODETIME
+        
+    def getImage(self, size):
+        mul = 0.4 + 0.6 * self.time / self.EXPLODETIME
+        return BombTile.getImage(int(round(size * mul)))

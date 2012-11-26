@@ -5,7 +5,7 @@ from math import trunc
 
 class Player:
     def __init__(self, tile):
-        self.x = self.y = 0
+        self.x = self.y = 5
         self.vx = self.vy = 0
         self.speed = 0.005
         self.tile = tile
@@ -22,12 +22,12 @@ class Player:
         return (self.x, self.y)
         
     def getRoundCoordinate(self):
-        return (round(self.x), round(self.y))
+        return self.round(self.x, self.y)
         
     def setMovement(self, vxy):
         self.vx, self.vy = vxy
     
-    def move(self, t):
+    def tick(self, t):
         """ Calculates new position of tile after t seconds of pause """
         self.x, self.y = self.map.move(self, t)
         
@@ -39,9 +39,6 @@ class Player:
     
     def getTile(self):
         return self.tile.getTile(self.direction)
-    
-    def setMap(self, model):
-        self.map = model
         
     def __repr__(self):
         return str(self.getPos())
@@ -49,5 +46,5 @@ class Player:
     @staticmethod
     def round(x, y):
         y = int(y) if y-trunc(y) < 0.2 else int(y)+1
-        x = round(x)
+        x = int(round(x))
         return x, y

@@ -8,11 +8,15 @@ from misc import *
 tileFolder = os.path.join("resources","images","tiles")
 
 class Tile(object):
+    ignoreBomb = False
+    fragile = False
+    collectable = False
     @classmethod
     def getImage(cls, size):
         if not hasattr(cls, "lastImage") or cls.lastSize != size:
-            image = pygame.image.load(cls.imagePath).convert_alpha()
-            image = pygame.transform.smoothscale(image, (size, size))
+            if not hasattr(cls, "image") :
+                 cls.image = pygame.image.load(cls.imagePath).convert_alpha()
+            image = pygame.transform.smoothscale(cls.image, (size, size))
             cls.lastImage = image
             cls.lastSize = size
         return cls.lastImage
@@ -22,7 +26,6 @@ class Tile(object):
 
 class Rock(Tile):
     fragile = True
-    collectable = False
     symbol = "R"
     imagePath = os.path.join(tileFolder,"rock.png")
 
@@ -39,8 +42,6 @@ class Beam(Tile):
     def amount(size): return 4 * size
 
 class Floor(Tile):
-    fragile = False
-    collectable = False
     imagePath = os.path.join(tileFolder,"floor.png")
     
 class TileConstructor(Tile):
@@ -49,8 +50,9 @@ class TileConstructor(Tile):
     
     def getImage(self, size):
         if not hasattr(self, "lastImage") or self.lastSize != size:
-            image = pygame.image.load(self.imagePath).convert_alpha()
-            image = pygame.transform.smoothscale(image, (size, size))
+            if not hasattr(self, "image"):
+                 self.image = pygame.image.load(self.imagePath).convert_alpha()
+            image = pygame.transform.smoothscale(self.image, (size, size))
             self.lastImage = image
             self.lastSize = size
         return self.lastImage
@@ -67,6 +69,18 @@ class Player(Tile):
         
     def getTile(self, direction):
         return self.images[direction]
+        
+
+class BombTile(Tile):
+    symbol = "B"
+    imagePath = os.path.join(tileFolder,"Bomb.png")
+    
+class ExplosionTile(Tile):
+    imagePath = os.path.join(tileFolder,"explosion.png")
+    
+class Background(Tile):
+    imagePath = os.path.join("resources","images","background.png")
+    
     
 Player1 = Player(["p_1_up.png","p_1_down.png","p_1_right.png","p_1_left.png"])
 Player2 = Player(["p_2_up.png","p_2_down.png","p_2_right.png","p_2_left.png"])

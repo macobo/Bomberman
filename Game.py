@@ -15,7 +15,7 @@ class Game:
         self.player1 = Player(Objects.Player1)
         self.map = MapModel(size, self.player1)
         self.player1.setMap(self.map)
-        self.drawer = MapDrawer(self.map, screen, squareSize)
+        self.drawer = MapDrawer(self.map, screen, squareSize, size)
     
     def redraw(self, update = True):
         self.drawer.redraw(update)
@@ -26,6 +26,9 @@ class Game:
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit(0)
+            if event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    self.map.placeBomb(self.player1)
         
         keys = pygame.key.get_pressed()
         pressed = 0
@@ -41,13 +44,10 @@ class Game:
             self.player1.setDirection(tdirection)
     
     def update(self, t):
-        self.player1.move(t)
-        self.redraw()
-        
-        
+        self.map.update(t)
+        self.redraw()        
         
 if __name__ == "__main__":
-    
     sys.path.append(".")
     n = 20
     pygame.init()
@@ -55,7 +55,9 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((size*n, size*n))
     game = Game(screen, size, n)
     clock = pygame.time.Clock()
+    game.map.placeBomb(game.player1)
     while True:
         t = clock.tick(40)
         game.processEvents(t)
         game.update(t)
+        #print game.player1.getRoundCoordinate()
