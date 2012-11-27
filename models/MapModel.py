@@ -30,6 +30,10 @@ class MapModel(object):
         self.map[xy].remove(obj)
         if not self.map[xy]:
             del self.map[xy]
+            
+    def add(self, obj, xy):
+        xy = Player.round(*xy)
+        self.map[xy].append(obj)
         
     def _generateMap(self):
         self.map = defaultdict(list)
@@ -40,7 +44,7 @@ class MapModel(object):
                 canPlace = (x, y) not in self.map
                 canPlace = canPlace or all(obj.canGoUnder(x) for x in self.map[x,y])
                 if canPlace:
-                    self.map[x,y].append(obj)
+                    self.add(obj, (x,y))
                     placed += 1
 
     def __str__(self):
@@ -55,7 +59,9 @@ class MapModel(object):
     def objectsAt(self, xy):
         """ Returns tiles for objects at coordinate x,y """
         x, y = Player.round(*xy)
-        return self.map[x,y] if (x,y) in self.map else []
+        result = self.map[x,y] if (x,y) in self.map else []
+        assert(not any(isinstance(x, Player) for x in result))
+        return result
         
     def playersAt(self, xy):
         xy = Player.round(*xy)
@@ -86,7 +92,7 @@ class MapModel(object):
         players = list(self.playersAt((nx, ny)))
         if len(players) > 1:
             players.remove(player)
-            objects += players
+            objects = objects + players
         cannotMove = bool(objects)
         cannotMove = cannotMove and any(x.solid for x in objects)
         # cannot step through
@@ -108,8 +114,9 @@ class MapModel(object):
             return
         player.placeBomb()
         bomb = Bomb(x, y, player)
+        assert(not isinstance(bomb, Player))
         self.bombs.append(bomb)
-        self.map[pos].append(bomb)
+        self.add(bomb, pos)
         print "Placed a bomb at",x,y
         
         
@@ -123,7 +130,8 @@ class MapModel(object):
         affected = explosion.getAffected()
         for xy in filter(self.map.has_key, affected):
             self.map[xy] = filter(lambda x: not x.fragile, self.map[xy])
-            if not self.map[xy]: del self.map[xy]
+            if not self.map[xy]: 
+                del self.map[xy]
         for xy in filter(self.playersAt, affected):
             for player in self.playersAt(xy):
                 print "{} dies".format(player)

@@ -28,7 +28,6 @@ class MapDrawer(object):
         if update:
             pygame.display.flip()
 
-
 if __name__ == "__main__":
     import sys
     sys.path.append(".")

@@ -10,6 +10,7 @@ class Player:
     LASTKILLTIME = 1500
     statusTuple = namedtuple("Status", ["speed", "bombs", "bombRadius", "lives"])
     solid = True
+    collectable = False
     
     def __init__(self, tile, x, y):
         self.x = x
@@ -76,10 +77,6 @@ class Player:
         self.vx = x * self.speed
         self.vy = y * self.speed
         self.direction = direction
-    
-    def getTile(self):
-        tile = self.tile.getTile(self.direction)
-        return tile
         
     def resetHappyCounter(self):
         self.lastKill = 0
@@ -99,7 +96,11 @@ class Player:
                                  lives = self.lives))
     
     def __repr__(self):
-        return str(self.getPos())
+        return "Player at {}".format(self.getPos())
+        
+    def getTile(self):
+        tile = self.tile.getTile(self.direction)
+        return tile
         
     @staticmethod
     def round(x, y):
