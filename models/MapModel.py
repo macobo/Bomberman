@@ -24,6 +24,7 @@ class MapModel(object):
             #else:
             #    yield xy, Objects.Floor
         for player in self.players:
+            # TODO: - instead of tile, return a function?
             yield player.getPos(), player.getTile()
         for explosion in self.explosions:
             for xy in explosion.getAffected():
@@ -111,7 +112,7 @@ class MapModel(object):
         # out with the old
         self.bombs.remove(bomb)
         self.remove(bomb, bomb.getPos())
-        bomb.player.explode()
+        bomb.player.addBomb()
         # in with the new
         explosion = Explosion(bomb, self)
         affected = explosion.getAffected()
@@ -119,10 +120,10 @@ class MapModel(object):
             self.map[xy] = filter(lambda x: not x.fragile, self.map[xy])
             if not self.map[xy]: del self.map[xy]
         for xy in filter(self.playersAt, affected):
-            # TODO: blow up player            
-            pass
+            for player in self.playersAt(xy):
+                print "{} dies".format(player)
+                player.die()
         self.explosions.append(explosion)
-        
         
 
 def inRange(x, upper, lower=0):

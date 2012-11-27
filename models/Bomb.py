@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from Objects import BombTile
+from Objects import Tile, BombTile
 
-class Bomb(BombTile):
-    ignoreBomb = True
-    
+class Bomb(Tile):
     EXPLODETIME = 3000
     def __init__(self, x, y, player):
+        Tile.__init__(self, None)
         self.x, self.y = x, y
         self.radius = player.bombRadius
         self.time = 0
@@ -20,8 +19,8 @@ class Bomb(BombTile):
         self.time += t
         return self.time >= self.EXPLODETIME
         
-    def getImage(self, size):
+    def __call__(self, size):
         mul = min(0.4 + 0.6 * self.time / self.EXPLODETIME,1.3)
-        return BombTile.getImage(int(round(size * mul)))
+        return BombTile(int(round(size * mul)))
     
     # TODO: inRange(player)

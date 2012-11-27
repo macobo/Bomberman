@@ -3,8 +3,8 @@
 from misc import *
 from math import trunc
 
-class Player:
-    DEADTIME = 3000
+class Player(object):
+    TOTALDEADTIME = 3000
     def __init__(self, tile):
         self.x = self.y = 5
         self.tile = tile
@@ -25,8 +25,12 @@ class Player:
     def placeBomb(self):
         self.placed += 1
     
-    def explode(self):
+    def addBomb(self):
         self.placed = min(1, self.placed-1) # can occur when you die
+        
+    def die(self):
+        self.dead = True
+        self.deadTime = 0
     
     def setMap(self, mapModel):
         self.map = mapModel
@@ -46,17 +50,28 @@ class Player:
     
     def tick(self, t):
         """ Calculates new position of tile after t seconds of pause """
-        self.x, self.y = self.map.move(self, t)
+        if not self.dead:
+            self.x, self.y = self.map.move(self, t)
+        else:
+            self.deadTime += t
+            if self.deadTime > self.TOTALDEADTIME:
+                self.reset()
         
     def setDirection(self, direction):
+        if self.dead: return
         x, y = direction
         self.vx = x * self.speed
         self.vy = y * self.speed
         self.direction = direction
     
     def getTile(self):
-        return self.tile.getTile(self.direction)
-        
+        tile = self.tile.getTile(self.direction)
+        return tile
+
+    def stateOfMind(self):
+        status = NEUTRAL
+        return status
+    
     def __repr__(self):
         return str(self.getPos())
         

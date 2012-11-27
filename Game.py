@@ -26,22 +26,27 @@ class Game:
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit(0)
-            if event.type == KEYDOWN:
-                if event.key == K_SPACE:
-                    self.map.placeBomb(self.player1)
-        
+            if event.type == KEYDOWN and event.key == K_t:
+                print("CHEAT")
+                Objects.BombBonus.collectBy(self.player1)
+                Objects.Pepper.collectBy(self.player1)
+        self.handleKeys(self.player1, t, P1_KEYS)
+            
+    def handleKeys(self, player, t, playerKeys):
         keys = pygame.key.get_pressed()
         pressed = 0
-        tdirection = (0,0)
-        for key, direction in zip(KEYS, DIRECTIONS):
+        newDirection = (0,0)
+        for key, direction in zip(playerKeys[:-1], DIRECTIONS):
             if keys[key]:
                 pressed += 1
-                tdirection = direction
+                newDirection = direction
+        if keys[playerKeys[-1]]:
+            self.map.placeBomb(player)
         if pressed != 1:
-            self.player1.setMovement((0,0))
+            player.setMovement((0,0))
         else:
-            self.player1.setMovement(tdirection)
-            self.player1.setDirection(tdirection)
+            player.setMovement(newDirection)
+            player.setDirection(newDirection)
     
     def update(self, t):
         self.map.update(t)
@@ -56,7 +61,7 @@ if __name__ == "__main__":
     game = Game(screen, size, n)
     clock = pygame.time.Clock()
     while True:
-        t = clock.tick(40)
+        t = clock.tick(50)
         game.processEvents(t)
         game.update(t)
         #print game.player1.getRoundCoordinate()

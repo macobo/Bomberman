@@ -20,9 +20,9 @@ class MapDrawer(object):
     def redraw(self, update = True):
         """ Redraws the map onto the screen. If update is True, 
             pygame.display.flip() will be called. """
-        self.screen.blit(Objects.Background.getImage(self.tileSize*self.mapSize), (self.start_x, self.start_y))
+        self.screen.blit(Objects.Background(self.tileSize*self.mapSize), (self.start_x, self.start_y))
         for (row, col), tile in self.model.items():
-            icon = tile.getImage(self.tileSize)
+            icon = tile(self.tileSize)
             w, h = icon.get_size()
             self.screen.blit(icon, self.adjusted(row, col, w, h))
         if update:

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from misc import *
-from Objects import ExplosionTile
+from Objects import ExplosionTile, Tile
 
-class Explosion(ExplosionTile):
+class Explosion(Tile):
     EXPLOSIONTIME = 700
     def __init__(self, bomb, map):
+        Tile.__init__(self, None, solid = False)
         x, y = bomb.getPos()
         self.affected = calculateAffected(x,y, map, bomb.radius)
         self.time = 0
@@ -16,9 +17,9 @@ class Explosion(ExplosionTile):
         self.time += t
         return self.time > self.EXPLOSIONTIME
         
-    def getImage(self, size):
+    def __call__(self, size):
         mul = min(1.5, 0.4 + 0.6 * self.time / self.EXPLOSIONTIME)
-        return ExplosionTile.getImage(int(round(size * mul)))
+        return ExplosionTile(int(round(size * mul)))
 
 
 def calculateAffected(x, y, map, radius):
