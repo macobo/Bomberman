@@ -55,9 +55,10 @@ class MapModel(object):
     def objectsAt(self, xy):
         """ Returns tiles for objects at coordinate x,y """
         x, y = Player.round(*xy)
-        return self.map[x,y] if (x,y) in self.map else None
+        return self.map[x,y] if (x,y) in self.map else []
         
     def playersAt(self, xy):
+        xy = Player.round(*xy)
         return filter(lambda p: p.getRoundCoordinate()==xy, self.players)
         
     def update(self, t):
@@ -82,12 +83,16 @@ class MapModel(object):
         nx = inRange(player.x + player.vx * t, self.size-1)
         ny = inRange(player.y + player.vy * t, self.size-1)
         objects = self.objectsAt((nx, ny))
+        players = list(self.playersAt((nx, ny)))
+        if len(players) > 1:
+            players.remove(player)
+            objects += players
         cannotMove = bool(objects)
         cannotMove = cannotMove and any(x.solid for x in objects)
         # cannot step through
         ox, oy = Player.round(nx, ny)
-        #if objects and len(objects) == 1:
-        #    ox, oy = objects[0].getPos()
+        if objects and len(objects) == 1 and isinstance(objects[0], Bomb):
+            ox, oy = objects[0].getPos()
         cannotMove = cannotMove and abs(ox-nx) <= abs(ox-player.x)
         cannotMove = cannotMove and abs(oy-ny) <= abs(oy-player.y)
         if cannotMove:
@@ -105,7 +110,7 @@ class MapModel(object):
         bomb = Bomb(x, y, player)
         self.bombs.append(bomb)
         self.map[pos].append(bomb)
-        print "Placed a bomb at ",x,y
+        print "Placed a bomb at",x,y
         
         
     def explode(self, bomb):

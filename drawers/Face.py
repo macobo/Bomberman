@@ -15,7 +15,6 @@ class Face(pygame.sprite.Sprite):
             iwidth, iheight = self.images[state].get_size()
             width = self.rect.width
             height = int(1.0 * width / iwidth  * iheight)
-            print (width, height), (iwidth, iheight)
             self.images[state] = pygame.transform.smoothscale(self.images[state], (width, height))
         self.image = self.images[state]
     

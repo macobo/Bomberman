@@ -41,7 +41,7 @@ class PanelDrawer(object):
             face.update()
             self.getScreen().blit(face.image, face.rect)
             self.getScreen().blit(surface, (x,y+self.h))
-            write = lambda s,i: self.writeCentered(s, (x+self.panelSize//2, y+self.h+10+25*i), self.smallfont)
+            write = lambda s,i: self.writeCentered(s, (x+self.panelSize//2, y+self.h+10+30*i), self.smallfont)
             status = face.player.status()
             write("Pomme: {}".format(status.bombs), 0)
             write("Raadius: {}".format(status.bombRadius), 1)

@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from collections import namedtuple
+from Objects import Tile
 from misc import *
 from math import trunc
 
-class Player(object):
+class Player:
     TOTALDEADTIME = 3000
     LASTKILLTIME = 1500
     statusTuple = namedtuple("Status", ["speed", "bombs", "bombRadius", "lives"])
+    solid = True
+    
     def __init__(self, tile, x, y):
         self.x = x
         self.y = y
@@ -21,7 +24,7 @@ class Player(object):
     def reset(self):
         self.vx = self.vy = 0
         self.speed = 0.005
-        self.bombRadius = 3
+        self.bombRadius = 2
         self.bombs = 1
         self.placed = 0
         

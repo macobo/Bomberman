@@ -24,7 +24,6 @@ class Tile(object):
             image.set_alpha(50)
             self.lastImage = image
             self.lastSize = size
-            
         return self.lastImage
         
     @staticmethod
