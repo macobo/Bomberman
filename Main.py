@@ -2,7 +2,7 @@
 
 import pygame
 from Game import Game
-from drawers.Face import Face
+from drawers.PanelDrawer import PanelDrawer
 import sys
 from misc import *
 from pygame.locals import *
@@ -15,15 +15,9 @@ class Main(object):
         self.squareSize = squareSize
         self.mapSize = mapSize
         size = self.squareSize*self.mapSize
-        
-        pygame.init()
-        self.screen = pygame.display.set_mode((size+2*self.PANELWIDTH, size))
-        self.game = Game(self.screen, self.squareSize, self.mapSize, {"start_x":self.PANELWIDTH})
-        self.urmas = Face(URMASPICS, (0,0,self.PANELWIDTH,self.PANELWIDTH), 
-                          self.game.players[0].stateOfMind)
-        self.katrin = Face(KATRINPICS, (self.PANELWIDTH+size,0,self.PANELWIDTH,self.PANELWIDTH), 
-                           self.game.players[1].stateOfMind)
-       
+        self.panel = PanelDrawer(self.PANELWIDTH, size)
+        self.game = Game(self.panel.getScreen(), self.squareSize, self.mapSize, {"start_x":self.PANELWIDTH})
+        self.panel.createFaces(self.game.map)
         
     def mainloop(self):
         self.clock = pygame.time.Clock()
@@ -34,14 +28,9 @@ class Main(object):
         t = self.clock.tick(50)
         self.game.processEvents(t)
         self.game.update(t, False)
-        self.urmas.update()
-        self.katrin.update()
-        self.screen.blit(self.urmas.image, self.urmas.rect)
-        self.screen.blit(self.katrin.image, self.katrin.rect)
-        pygame.display.flip()
-        
-            
+        self.panel.update()
             
 if __name__ == "__main__":
+    pygame.init()
+    pygame.display.set_caption("Pommimäng")
     Main(25, 20).mainloop()
-        

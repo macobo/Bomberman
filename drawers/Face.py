@@ -1,11 +1,12 @@
 import pygame
 class Face(pygame.sprite.Sprite):
-    def __init__(self, imagePaths, rect, stateCallback = None):
+    def __init__(self, imagePaths, rect, player):
         pygame.sprite.Sprite.__init__(self)
         self.imagePath = imagePaths
-        self.stateCallback = stateCallback
         self.images = {}
         self.rect = pygame.Rect(rect)
+        self.player = player
+        self.stateCallback = player.stateOfMind
     
     def update(self):
         state = self.stateCallback()

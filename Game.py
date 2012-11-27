@@ -10,14 +10,14 @@ from models import Objects
 from misc import *
 
 class Game:
-    def __init__(self, screen, squareSize = 30, size = 20):
+    def __init__(self, screen, squareSize = 30, mapSize = 20, drawerParams={}):
         self.screen = screen
-        self.player1 = Player(Objects.Player1, 0, 0)
-        self.player2 = Player(Objects.Player1, size-1, size-1)
-        self.map = MapModel(size, self.player1, self.player2)
-        self.player1.setMap(self.map)
-        self.player2.setMap(self.map)
-        self.drawer = MapDrawer(self.map, screen, squareSize, size)
+        self.players = [Player(Objects.Player1, 0, 0), 
+                        Player(Objects.Player1, mapSize-1, mapSize-1)]
+        self.map = MapModel(mapSize, self.players[0], self.players[1])
+        self.players[0].setMap(self.map)
+        self.players[1].setMap(self.map)
+        self.drawer = MapDrawer(self.map, screen, squareSize, mapSize, **drawerParams)
     
     def redraw(self, update = True):
         self.drawer.redraw(update)
@@ -32,8 +32,8 @@ class Game:
                 print("CHEAT")
                 Objects.BombBonus.collectBy(self.player1)
                 Objects.Pepper.collectBy(self.player1)
-        self.handleKeys(self.player1, t, P1_KEYS)
-        self.handleKeys(self.player2, t, P2_KEYS)
+        self.handleKeys(self.players[0], t, P1_KEYS)
+        self.handleKeys(self.players[1], t, P2_KEYS)
             
     def handleKeys(self, player, t, playerKeys):
         keys = pygame.key.get_pressed()
@@ -51,9 +51,9 @@ class Game:
             player.setMovement(newDirection)
             player.setDirection(newDirection)
     
-    def update(self, t):
+    def update(self, t, update=True):
         self.map.update(t)
-        self.redraw()        
+        self.redraw(update)        
         
 if __name__ == "__main__":
     sys.path.append(".")

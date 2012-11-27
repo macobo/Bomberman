@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from misc import *
 from Objects import ExplosionTile, Tile
+from Player import Player
 
 class Explosion(Tile):
     EXPLOSIONTIME = 700
     def __init__(self, bomb, map):
         Tile.__init__(self, None, solid = False)
         x, y = bomb.getPos()
-        self.affected = calculateAffected(x,y, map, bomb.radius)
+        self.affected = calculateAffected(bomb, map)
         self.time = 0
         
     def getAffected(self):
@@ -22,15 +23,21 @@ class Explosion(Tile):
         return ExplosionTile(int(round(size * mul)))
 
 
-def calculateAffected(x, y, map, radius):
+def calculateAffected(bomb, map):
     " Calculates the (x,y) positions of affected squares "
+    ax, ay = Player.round(*bomb.getPos())
+    radius = bomb.radius
     affected = set()
     for dx, dy in DIRECTIONS:
         for i in range(radius+1):
-            objects = map.objectsAt((x + i*dx, y + i*dy))
-            if objects and any(obj.solid for obj in objects):
+            x = ax + i*dx
+            y = ay + i*dy
+            if not (0 <= x < map.size) or not (0 <= y < map.size):
+                continue
+            objects = map.objectsAt((x,y))
+            if objects and any(obj.solid and not isinstance(obj, bomb.__class__) for obj in objects):
                 if any(obj.fragile for obj in objects):
-                    affected.add((x+i*dx, y+i*dy))
+                    affected.add((x, y))
                 break
-            affected.add((x+i*dx, y+i*dy))
+            affected.add((x, y))
     return affected

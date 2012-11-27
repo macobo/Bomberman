@@ -16,21 +16,17 @@ class MapModel(object):
 
     def items(self):
         """ Returns all objects in the map. Bonuses will be before rocks and players will be last """
-        from itertools import product
-        for xy in product(range(self.size), repeat=2):
-            if xy in self.map:
-                for tile in self.map[xy]:
-                    yield xy, tile
-            #else:
-            #    yield xy, Objects.Floor
+        for xy, tiles in self.map.items():
+            for tile in tiles:
+                yield xy, tile
         for player in self.players:
-            # TODO: - instead of tile, return a function?
             yield player.getPos(), player.getTile()
         for explosion in self.explosions:
             for xy in explosion.getAffected():
                 yield xy, explosion
     
     def remove(self, obj, xy):
+        xy = Player.round(*xy)
         self.map[xy].remove(obj)
         if not self.map[xy]:
             del self.map[xy]
@@ -85,11 +81,14 @@ class MapModel(object):
         """ Tries to move player and returns new coordinates for it """
         nx = inRange(player.x + player.vx * t, self.size-1)
         ny = inRange(player.y + player.vy * t, self.size-1)
-        cannotMove = bool(self.objectsAt((nx, ny)))
-        cannotMove = cannotMove and any(x.solid for x in self.objectsAt((nx, ny)))
+        objects = self.objectsAt((nx, ny))
+        cannotMove = bool(objects)
+        cannotMove = cannotMove and any(x.solid for x in objects)
         # cannot step through
         ox, oy = Player.round(nx, ny)
-        cannotMove = cannotMove and abs(ox - nx) <= abs(ox - player.x)
+        #if objects and len(objects) == 1:
+        #    ox, oy = objects[0].getPos()
+        cannotMove = cannotMove and abs(ox-nx) <= abs(ox-player.x)
         cannotMove = cannotMove and abs(oy-ny) <= abs(oy-player.y)
         if cannotMove:
             return player.x, player.y
@@ -98,13 +97,14 @@ class MapModel(object):
 
     
     def placeBomb(self, player):
-        x, y = player.getRoundCoordinate()
-        if (x,y) in self.map or not player.canPlaceBomb(): 
+        x, y = player.getPos()
+        pos = player.getRoundCoordinate()
+        if pos in self.map or not player.canPlaceBomb(): 
             return
         player.placeBomb()
         bomb = Bomb(x, y, player)
         self.bombs.append(bomb)
-        self.map[x,y].append(bomb)
+        self.map[pos].append(bomb)
         print "Placed a bomb at ",x,y
         
         
@@ -123,6 +123,7 @@ class MapModel(object):
             for player in self.playersAt(xy):
                 print "{} dies".format(player)
                 player.die()
+                bomb.player.resetHappyCounter()
         self.explosions.append(explosion)
         
 

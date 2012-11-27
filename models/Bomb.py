@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from Objects import Tile, BombTile
+from Explosion import Explosion
+from misc import *
 
 class Bomb(Tile):
     EXPLODETIME = 3000
@@ -22,5 +24,6 @@ class Bomb(Tile):
     def __call__(self, size):
         mul = min(0.4 + 0.6 * self.time / self.EXPLODETIME,1.3)
         return BombTile(int(round(size * mul)))
-    
-    # TODO: inRange(player)
+        
+    def inRange(self, map):
+        return Explosion(self, map).getAffected()
