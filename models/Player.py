@@ -5,8 +5,9 @@ from math import trunc
 
 class Player(object):
     TOTALDEADTIME = 3000
-    def __init__(self, tile):
-        self.x = self.y = 5
+    def __init__(self, tile, x, y):
+        self.x = x
+        self.y = y
         self.tile = tile
         self.direction = NORTH
         self.reset()

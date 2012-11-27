@@ -12,9 +12,11 @@ from misc import *
 class Game:
     def __init__(self, screen, squareSize = 30, size = 20):
         self.screen = screen
-        self.player1 = Player(Objects.Player1)
-        self.map = MapModel(size, self.player1)
+        self.player1 = Player(Objects.Player1, 0, 0)
+        self.player2 = Player(Objects.Player1, size-1, size-1)
+        self.map = MapModel(size, self.player1, self.player2)
         self.player1.setMap(self.map)
+        self.player2.setMap(self.map)
         self.drawer = MapDrawer(self.map, screen, squareSize, size)
     
     def redraw(self, update = True):
@@ -31,6 +33,7 @@ class Game:
                 Objects.BombBonus.collectBy(self.player1)
                 Objects.Pepper.collectBy(self.player1)
         self.handleKeys(self.player1, t, P1_KEYS)
+        self.handleKeys(self.player2, t, P2_KEYS)
             
     def handleKeys(self, player, t, playerKeys):
         keys = pygame.key.get_pressed()
