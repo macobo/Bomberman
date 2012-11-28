@@ -23,28 +23,32 @@ class Player:
         self.speed = 0.005
         self.bombRadius = 2
         self.bombs = 2
+        self.placed = 0
         self.reset()
         
     def reset(self):
         self.vx = self.vy = 0
-
-        self.placed = 0
         
     def canPlaceBomb(self):
+        assert(0 <= self.placed <= self.bombs)
         return not self.dead and self.placed < self.bombs
         
     def placeBomb(self):
+        assert(0 <= self.placed < self.bombs)
         self.placed += 1
     
     def addBomb(self):
-        self.placed = min(1, self.placed-1) # can occur when you die
+        assert(1 <= self.placed)
+        assert(self.placed <= self.bombs)
+        self.placed = self.placed-1 # can occur when you die
         
     def die(self):
+        self.deadTime = 0
         if not self.dead:
             self.dead = True
             self.lives -= 1
             self.reset()
-            self.deadTime = 0
+            
     
     def setMap(self, mapModel):
         self.map = mapModel

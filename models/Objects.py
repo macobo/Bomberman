@@ -45,8 +45,8 @@ class Collectable(Tile):
     def canGoUnder(cls): 
         return cls.fragile and not isinstance(cls, Player)
         
-Rock = Tile(os.path.join(tileFolder,"rock.png"), fragile=True, amount=lambda s:3*s)
-Beam = Tile(imagePath = os.path.join(tileFolder,"beam.png"), amount=lambda s:4 *s)
+Rock = Tile(os.path.join(tileFolder,"rock.png"), fragile=True, amount=lambda s:1*s)
+Beam = Tile(imagePath = os.path.join(tileFolder,"beam.png"), amount=lambda s:4*s)
     
 class TileConstructor(Tile):
     def __init__(self, imageName):
@@ -90,7 +90,7 @@ def bombCollect(player):
 BombBonus = Collectable(os.path.join(tileFolder,"bombBonus.png"), bombCollect, lambda s: 5)
 
 def collectCoffee(player):
-    player.speed *= 1.3
+    player.speed = min(0.0125, player.speed * 1.3)
     player.resetHappyCounter()
 Coffee = Collectable(os.path.join(tileFolder,"coffee.png"), collectCoffee, lambda s: 3)    
     

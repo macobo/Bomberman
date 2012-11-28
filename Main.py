@@ -23,11 +23,13 @@ class Main(object):
         self.clock = pygame.time.Clock()
         while True:
             self.tick()
+                
             
     def tick(self):
         t = self.clock.tick(50)
         self.game.processEvents(t)
-        self.game.update(t, False)
+        if self.game.update(t, False) and not self.game.map.thingsLeft():
+            self.game.map.resetMap(regen = True)
         self.panel.update()
             
 if __name__ == "__main__":

@@ -3,20 +3,23 @@ from Bomb import Bomb
 from Explosion import Explosion
 from collections import defaultdict
 from mapGenerator import mapGenerator
+import Objects
 
 class MapModel(object):
     def __init__(self, size, *players):
         assert(size > 10)
         self.size = size
         self.players = players
-        self.bombs = []
-        self.explosions = []
-        mapGenerator(self, self.size)
+        self.resetMap(regen = True)
         
-    def resetMap(self):
+    def resetMap(self, regen = False):
         self.bombs = []
         self.explosions = []
         self.map = defaultdict(list)
+        self.things = self.blocks = 0
+        if regen:
+            mapGenerator(self, self.size)
+            
 
     def items(self):
         """ Returns all objects in the map. Bonuses will be before rocks and players will be last """
@@ -32,12 +35,17 @@ class MapModel(object):
     def remove(self, obj, xy):
         xy = Player.round(*xy)
         self.map[xy].remove(obj)
+        self.things -= 1
         if not self.map[xy]:
             del self.map[xy]
             
     def add(self, obj, xy):
         xy = Player.round(*xy)
         self.map[xy].append(obj)
+        if obj is Objects.Beam:
+            self.blocks += 1
+        else:
+            self.things += 1
 
     def __str__(self):
         out = ["Map of {0}x{0}".format(self.size)]
@@ -59,13 +67,23 @@ class MapModel(object):
         xy = Player.round(*xy)
         return filter(lambda p: p.getRoundCoordinate()==xy, self.players)
         
+    def thingsLeft(self):
+        return bool(self.things)
+        
+    def countBlocks(self):
+        return self.blocks
+    
     def update(self, t):
+        " Updates the map. Returns True if there some objects were removed/added "
+        updates = False
         for explosion in self.explosions[:]:
             for bomb in self.bombs:
                 if explosion.affects(bomb):
                     self.explode(bomb)
+                    updates = True
             if explosion.tick(t):
                 self.explosions.remove(explosion)
+                updates = True
                 
         for player in self.players:
             player.tick(t)
@@ -76,11 +94,14 @@ class MapModel(object):
             for collectable in filter(lambda x: x.collectable, self.map[xy]):
                 collectable.collectBy(player)
                 self.remove(collectable, xy)
+                updates = True
             
         for bomb in self.bombs[:]:
             if bomb.tick(t):
                 print "BOOM", bomb.time
                 self.explode(bomb)
+                updates = True
+        return updates
 
         
     def move(self, player, t):
@@ -109,14 +130,12 @@ class MapModel(object):
     def placeBomb(self, player):
         x, y = player.getPos()
         pos = player.getRoundCoordinate()
-        if pos in self.map or not player.canPlaceBomb(): 
-            return
-        player.placeBomb()
-        bomb = Bomb(x, y, player)
-        assert(not isinstance(bomb, Player))
-        self.bombs.append(bomb)
-        self.add(bomb, pos)
-        print "Placed a bomb at",x,y
+        if pos not in self.map and player.canPlaceBomb():
+            player.placeBomb()
+            bomb = Bomb(x, y, player)
+            self.bombs.append(bomb)
+            self.add(bomb, pos)
+            print "Placed a bomb at",x,y, " {}/{}".format(player.placed, player.bombs)
         
         
     def explode(self, bomb):

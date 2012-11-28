@@ -52,8 +52,10 @@ class Game:
             player.setDirection(newDirection)
     
     def update(self, t, update=True):
-        self.map.update(t)
-        self.redraw(update)        
+        " Updates the map and redraws it. Returns True if something on the map was added/removed "
+        result = self.map.update(t)
+        self.redraw(update)      
+        return result
         
 if __name__ == "__main__":
     sys.path.append(".")

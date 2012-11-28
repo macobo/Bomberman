@@ -34,7 +34,7 @@ def mapGenerator(map, size):
                     placed += 1
         if validConfiguration(map, size, map.players):
             break
-    #print iteration
+    print "Generating the map took {} iteration(s).".format(iteration)
                 
 def neighbors(xy, size):
     x, y = xy
@@ -56,7 +56,7 @@ def validConfiguration(map, size, players):
     from collections import deque
     visited = set()
     Q = deque([players[0].getRoundCoordinate()])
-    while len(Q) and any(player.getRoundCoordinate() not in visited for player in players):
+    while len(Q):
         xy = Q.popleft()
         canGo = xy not in visited
         canGo = canGo and not any(x.solid and not x.fragile for x in map.objectsAt(xy))
@@ -64,4 +64,4 @@ def validConfiguration(map, size, players):
             visited.add(xy)
             for nxy in neighbors(xy, size):
                 Q.append(nxy)
-    return all(player.getRoundCoordinate() in visited for player in players)
+    return size * size - len(visited) == map.countBlocks()
