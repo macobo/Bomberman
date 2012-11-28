@@ -47,6 +47,10 @@ class PanelDrawer(object):
             write("Raadius: {}".format(status.bombRadius), 1)
             write("Kiirus: {}".format(status.speed), 2)
             write("Elusid: {}".format(status.lives), 3)
+            height = self.boardSize-10
+            for line in reversed(status.comment.split("\n")):
+                height -= 30
+                self.writeCentered(line, (x+self.panelSize//2, height), self.smallfont)
         if flip: 
             pygame.display.flip()
         

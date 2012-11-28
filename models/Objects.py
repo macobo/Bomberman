@@ -2,10 +2,14 @@
 import pygame
 import sys
 import os
+import Bomb
 sys.path.append(".")
 from misc import *
 
 tileFolder = os.path.join("resources","images","tiles")
+
+def isBlock(tile):
+    return tile.solid and not tile.fragile and not isinstance(tile,Bomb.Bomb)
 
 class Tile(object):
     def __init__(self, imagePath, fragile = False, collectable = False, solid = True, amount = lambda s: 0):
@@ -45,7 +49,7 @@ class Collectable(Tile):
     def canGoUnder(cls): 
         return cls.fragile and not isinstance(cls, Player)
         
-Rock = Tile(os.path.join(tileFolder,"rock.png"), fragile=True, amount=lambda s:1*s)
+Rock = Tile(os.path.join(tileFolder,"rock.png"), fragile=True, amount=lambda s:3*s)
 Beam = Tile(imagePath = os.path.join(tileFolder,"beam.png"), amount=lambda s:4*s)
     
 class TileConstructor(Tile):

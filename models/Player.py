@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from collections import namedtuple
-from Objects import Tile
 from misc import *
 from math import trunc
+import random
 
 class Player:
     TOTALDEADTIME = 3000
     LASTKILLTIME = 1500
-    statusTuple = namedtuple("Status", ["speed", "bombs", "bombRadius", "lives"])
+    statusTuple = namedtuple("Status", ["speed", "bombs", "bombRadius", "lives", "comment"])
     solid = True
     collectable = False
     
@@ -24,6 +24,7 @@ class Player:
         self.bombRadius = 2
         self.bombs = 2
         self.placed = 0
+        self.comment = ""
         self.reset()
         
     def reset(self):
@@ -75,6 +76,8 @@ class Player:
             self.deadTime += t
             if self.deadTime > self.TOTALDEADTIME:
                 self.dead = False
+            if self.lastKill > self.LASTKILLTIME:
+                self.comment = ""
         
     def setDirection(self, direction):
         if self.dead: 
@@ -86,6 +89,7 @@ class Player:
         
     def resetHappyCounter(self):
         self.lastKill = 0
+        self.comment = random.choice(COMMENTS)
 
     def stateOfMind(self):
         xy = self.getRoundCoordinate()
@@ -99,7 +103,8 @@ class Player:
         return (self.statusTuple(speed = round(self.speed*200,2),
                                  bombs = self.bombs,
                                  bombRadius = self.bombRadius,
-                                 lives = self.lives))
+                                 lives = self.lives,
+                                 comment = self.comment))
     
     def __repr__(self):
         return "Player at {}".format(self.getPos())

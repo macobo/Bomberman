@@ -10,7 +10,7 @@ from pygame.locals import *
 sys.path.append(".")
 
 class Main(object):
-    PANELWIDTH = 160
+    PANELWIDTH = 165
     def __init__(self, squareSize, mapSize):
         self.squareSize = squareSize
         self.mapSize = mapSize
@@ -23,7 +23,6 @@ class Main(object):
         self.clock = pygame.time.Clock()
         while True:
             self.tick()
-                
             
     def tick(self):
         t = self.clock.tick(50)

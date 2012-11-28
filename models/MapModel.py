@@ -4,6 +4,7 @@ from Explosion import Explosion
 from collections import defaultdict
 from mapGenerator import mapGenerator
 import Objects
+import itertools
 
 class MapModel(object):
     def __init__(self, size, *players):
@@ -42,7 +43,7 @@ class MapModel(object):
     def add(self, obj, xy):
         xy = Player.round(*xy)
         self.map[xy].append(obj)
-        if obj is Objects.Beam:
+        if Objects.isBlock(obj):
             self.blocks += 1
         else:
             self.things += 1
@@ -68,10 +69,12 @@ class MapModel(object):
         return filter(lambda p: p.getRoundCoordinate()==xy, self.players)
         
     def thingsLeft(self):
-        return bool(self.things)
+        return self.things
+        #return len(list(filter(lambda x: not Objects.isBlock(x), itertools.chain(*self.map.values()))))
         
     def countBlocks(self):
         return self.blocks
+        #return len(list(filter(lambda x: Objects.isBlock(x), itertools.chain(*self.map.values()))))
     
     def update(self, t):
         " Updates the map. Returns True if there some objects were removed/added "
@@ -98,9 +101,9 @@ class MapModel(object):
             
         for bomb in self.bombs[:]:
             if bomb.tick(t):
-                print "BOOM", bomb.time
                 self.explode(bomb)
                 updates = True
+                print "BOOM", bomb.time, self.things, self.blocks
         return updates
 
         
@@ -147,7 +150,8 @@ class MapModel(object):
         explosion = Explosion(bomb, self)
         affected = explosion.getAffected()
         for xy in filter(self.map.has_key, affected):
-            self.map[xy] = filter(lambda x: not x.fragile, self.map[xy])
+            for el in filter(lambda x: x.fragile, self.map[xy]):
+                self.remove(el, xy)
             if not self.map[xy]: 
                 del self.map[xy]
         for xy in filter(self.playersAt, affected):

@@ -59,14 +59,14 @@ class Game:
         
 if __name__ == "__main__":
     sys.path.append(".")
-    n = 20
-    pygame.init()
-    size = 25
-    screen = pygame.display.set_mode((size*n, size*n))
-    game = Game(screen, size, n)
-    clock = pygame.time.Clock()
-    while True:
-        t = clock.tick(50)
-        game.processEvents(t)
-        game.update(t)
+#    n = 20
+#    pygame.init()
+#    size = 25
+#    screen = pygame.display.set_mode((size*n, size*n))
+#    game = Game(screen, size, n)
+#    clock = pygame.time.Clock()
+#    while True:
+#        t = clock.tick(50)
+#        game.processEvents(t)
+#        game.update(t)
         #print game.player1.getRoundCoordinate()

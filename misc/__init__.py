@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pygame.locals import *
 from os.path import join
 NORTH = (0, -1)
@@ -23,3 +24,10 @@ KATRINPICS = {
 }
 
 fontPath = join("resources", "fonts", "Jokerman.ttf")
+
+COMMENTS = [
+    "Pihtas, põhjas",
+    "Tere hommikust!",
+    "Mis loed seal\najalehte?",
+    "Mis magad seal?"
+]
