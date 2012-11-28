@@ -24,10 +24,17 @@ KATRINPICS = {
 }
 
 fontPath = join("resources", "fonts", "Jokerman.ttf")
+titleImagePath = join("resources", "images", "title.jpg")
 
 COMMENTS = [
     "Pihtas, põhjas",
     "Tere hommikust!",
     "Mis loed seal\najalehte?",
     "Mis magad seal?"
+]
+
+SUICIDECOMMENTS = [
+    "Oih!",
+    "See veel puudus!",
+    "Nojah siis"
 ]

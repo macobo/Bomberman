@@ -85,17 +85,17 @@ Background = Tile(os.path.join("resources","images","background.png"))
 
 def pepperCollect(player):
     player.bombRadius += 1
-    player.resetHappyCounter()
+    player.resetBonusCounter()
 Pepper = Collectable(os.path.join(tileFolder,"pepper.png"), pepperCollect, lambda s: 5)
 
 def bombCollect(player):
     player.bombs += 1
-    player.resetHappyCounter()
+    player.resetBonusCounter()
 BombBonus = Collectable(os.path.join(tileFolder,"bombBonus.png"), bombCollect, lambda s: 5)
 
 def collectCoffee(player):
     player.speed = min(0.0125, player.speed * 1.3)
-    player.resetHappyCounter()
+    player.resetBonusCounter()
 Coffee = Collectable(os.path.join(tileFolder,"coffee.png"), collectCoffee, lambda s: 3)    
     
 Player1 = Player(["p_1_up.png","p_1_down.png","p_1_right.png","p_1_left.png"])

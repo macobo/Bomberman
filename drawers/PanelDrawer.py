@@ -60,3 +60,89 @@ class PanelDrawer(object):
         textWidth,_ = font.size(text)
         rendered = font.render(text, True, color)
         self.getScreen().blit(rendered, (x-textWidth//2, y))
+        
+    def winScreen(self, urmasLoses, katrinLoses):
+        darken(3000)
+        h = self.font.size("U")[1]
+        self.urmas.wRect = self.urmas.rect.move(self.boardSize//2-30, -h+30)
+        self.katrin.wRect = self.katrin.rect.move(-self.boardSize//2+30, -h+30)
+        if urmasLoses and katrinLoses:
+            self.katrin.stateCallback = lambda: SAD
+            self.urmas.stateCallback = lambda: SAD
+            self.showWinScreen("Viik oli. :(")
+        elif urmasLoses:
+            self.katrin.stateCallback = lambda: HAPPY
+            self.urmas.stateCallback = lambda: SAD
+            self.showWinScreen("Katrin on stuudio valitseja!")
+        elif katrinLoses:
+            self.katrin.stateCallback = lambda: SAD
+            self.urmas.stateCallback = lambda: HAPPY
+            self.showWinScreen("Urmas on stuudio valitseja!")
+        darken(3000, reverse = True)
+        
+    def showWinScreen(self, winText):
+        if not hasattr(self, "winimage"):
+            self.winimage, self.winPos = getScaledCenteredImage(titleImagePath, 
+                                                   self.boardSize + 2*self.panelSize, 
+                                                   self.boardSize)
+        self.screen.blit(self.winimage, self.winPos)
+        center = self.panelSize + self.boardSize//2
+        self.writeCentered(winText, (center, self.boardSize//2), self.font)
+        for face in [self.katrin, self.urmas]:
+            face.update()
+            self.screen.blit(face.image, face.wRect)
+        #pygame.display.flip()
+        
+class Dimmer(object):
+    darken_factor = 250
+    filter = (0,0,0)
+    def darken(self, factor):
+        #print factor * self.darken_factor
+        screen = pygame.display.get_surface()
+        screensize = screen.get_size()
+        self.buffer = pygame.Surface(screensize)
+        self.buffer.blit(screen, (0,0)) # to restore later
+        darken=pygame.Surface(screensize)
+        darken.fill(self.filter)
+        darken.set_alpha(factor * self.darken_factor)
+        # safe old clipping rectangle...
+        old_clip = screen.get_clip()
+        # ..blit over entire screen...
+        screen.blit(darken, (0,0))
+        # ... and restore clipping
+        screen.set_clip(old_clip)
+##        pygame.display.flip()
+        
+    def restore(self):
+        pygame.display.get_surface().blit(self.buffer,(0,0))
+        self.buffer = None
+        
+
+def darken(time, reverse = False):
+    dimmer = Dimmer()
+    clock = pygame.time.Clock()
+    t = 0
+    while t < time:
+        t += clock.tick(50)
+        if not reverse:
+            dimmer.darken(1.0 * t / time)
+        else:
+            dimmer.darken(1 - 1.0 * t / time)
+        pygame.display.flip()
+        dimmer.restore()
+        
+    
+def getScaledCenteredImage(path, width, height):
+    image = pygame.image.load(path).convert_alpha()
+    nWidth, nHeight = sizeMatch(image.get_width(), image.get_height(), width, height)
+    image = pygame.transform.smoothscale(image, (nWidth, nHeight))
+    return image, ((width - nWidth)//2, (height - nHeight)//2)
+
+def sizeMatch(width1, height1, width2, height2):
+    assert(width1 >= width2 and height1 >= height2)
+    rW = 1.0 * width2 / width1
+    rH = 1.0 * height2 / height1
+    ratio = max(rW, rH)
+    #print ratio, width1, height1, width2, height2, 1.0*width2 / width1, 1.0 * height2 / height1
+    return (int(width1 * ratio), int(height1 * ratio))
+    

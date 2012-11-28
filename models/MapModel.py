@@ -156,9 +156,9 @@ class MapModel(object):
                 del self.map[xy]
         for xy in filter(self.playersAt, affected):
             for player in self.playersAt(xy):
-                print "{} dies".format(player)
-                player.die()
-                bomb.player.resetHappyCounter()
+                if player.die():
+                    print "{} dies".format(player)
+                    bomb.player.resetKillCounter(suicide = bomb.player == player)
         self.explosions.append(explosion)
         
 

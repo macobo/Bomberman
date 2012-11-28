@@ -57,6 +57,9 @@ class Game:
         self.redraw(update)      
         return result
         
+    def winners(self):
+        return list(filter(lambda p: p.lives == 0, self.players))
+        
 if __name__ == "__main__":
     sys.path.append(".")
 #    n = 20

@@ -13,22 +13,26 @@ class Player:
     collectable = False
     
     def __init__(self, tile, x, y):
-        self.x = x
-        self.y = y
+        self.neutral_x = x
+        self.neutral_y = y
+        self.x, self.y = x, y
         self.tile = tile
         self.direction = NORTH
         self.lives = 4
         self.dead = False
-        self.lastKill = self.LASTKILLTIME
         self.speed = 0.005
         self.bombRadius = 2
         self.bombs = 2
         self.placed = 0
-        self.comment = ""
         self.reset()
+    
+    def toNeutralCorner(self):
+        self.x, self.y = self.neutral_x, self.neutral_y
         
     def reset(self):
         self.vx = self.vy = 0
+        self.comment = ""
+        self.lastKill = self.lastBonus = self.LASTKILLTIME
         
     def canPlaceBomb(self):
         assert(0 <= self.placed <= self.bombs)
@@ -49,6 +53,8 @@ class Player:
             self.dead = True
             self.lives -= 1
             self.reset()
+            return True
+        return False
             
     
     def setMap(self, mapModel):
@@ -70,14 +76,16 @@ class Player:
     def tick(self, t):
         """ Calculates new position of tile after t seconds of pause """
         self.lastKill += t
+        self.lastBonus += t
+        if self.lastKill > self.LASTKILLTIME:
+            self.comment = ""
         if not self.dead:
             self.x, self.y = self.map.move(self, t)
         else:
             self.deadTime += t
             if self.deadTime > self.TOTALDEADTIME:
                 self.dead = False
-            if self.lastKill > self.LASTKILLTIME:
-                self.comment = ""
+
         
     def setDirection(self, direction):
         if self.dead: 
@@ -87,15 +95,23 @@ class Player:
         self.vy = y * self.speed
         self.direction = direction
         
-    def resetHappyCounter(self):
+    def resetKillCounter(self, suicide = False):
         self.lastKill = 0
-        self.comment = random.choice(COMMENTS)
+        if suicide:
+            self.comment = random.choice(SUICIDECOMMENTS)
+        else:
+            self.comment = random.choice(COMMENTS)
+        
+    def resetBonusCounter(self):
+        self.lastBonus = 0
 
     def stateOfMind(self):
         xy = self.getRoundCoordinate()
         if self.dead or any(xy in bomb.inRange(self.map) for bomb in self.map.bombs):
             return SAD
         if self.lastKill < self.LASTKILLTIME:
+            return HAPPY
+        if self.lastBonus < self.LASTKILLTIME:
             return HAPPY
         return NORMAL
         

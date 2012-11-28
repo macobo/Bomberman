@@ -21,15 +21,22 @@ class Main(object):
         
     def mainloop(self):
         self.clock = pygame.time.Clock()
-        while True:
+        while not self.game.winners():
             self.tick()
+        winners = self.game.winners()
+        self.panel.winScreen(*[p in winners for p in self.game.players])
+        pygame.time.delay(5000)
+            
             
     def tick(self):
         t = self.clock.tick(50)
         self.game.processEvents(t)
         if self.game.update(t, False) and not self.game.map.thingsLeft():
+            for player in self.game.players:
+                player.toNeutralCorner()
             self.game.map.resetMap(regen = True)
         self.panel.update()
+        return t
             
 if __name__ == "__main__":
     pygame.init()
