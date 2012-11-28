@@ -1,9 +1,8 @@
-import Objects
 from Player import Player
 from Bomb import Bomb
 from Explosion import Explosion
-import random
 from collections import defaultdict
+from mapGenerator import mapGenerator
 
 class MapModel(object):
     def __init__(self, size, *players):
@@ -12,12 +11,17 @@ class MapModel(object):
         self.players = players
         self.bombs = []
         self.explosions = []
-        self._generateMap()
+        mapGenerator(self, self.size)
+        
+    def resetMap(self):
+        self.bombs = []
+        self.explosions = []
+        self.map = defaultdict(list)
 
     def items(self):
         """ Returns all objects in the map. Bonuses will be before rocks and players will be last """
         for xy, tiles in self.map.items():
-            for tile in tiles:
+            for tile in reversed(tiles):
                 yield xy, tile
         for player in self.players:
             yield player.getPos(), player.getTile()
@@ -34,20 +38,6 @@ class MapModel(object):
     def add(self, obj, xy):
         xy = Player.round(*xy)
         self.map[xy].append(obj)
-        
-    def _generateMap(self):
-        self.map = defaultdict(list)
-        for obj in Objects.placeable:
-            placed = 0
-            while placed < obj.amount(self.size):
-                (x, y) = random.randrange(self.size), random.randrange(self.size)
-                here = self.objectsAt((x,y))
-                canPlace = (x, y) not in self.map
-                canPlace = canPlace or all(obj.canGoUnder(x) for x in here)
-                canPlace = canPlace and (not obj.collectable or (bool(here) and all(x.fragile for x in here)))
-                if canPlace:
-                    self.add(obj, (x,y))
-                    placed += 1
 
     def __str__(self):
         out = ["Map of {0}x{0}".format(self.size)]

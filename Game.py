@@ -12,8 +12,8 @@ from misc import *
 class Game:
     def __init__(self, screen, squareSize = 30, mapSize = 20, drawerParams={}):
         self.screen = screen
-        self.players = [Player(Objects.Player1, 0, 0), 
-                        Player(Objects.Player2, mapSize-1, mapSize-1)]
+        self.players = [Player(Objects.Player2, 0, 0), 
+                        Player(Objects.Player1, mapSize-1, mapSize-1)]
         self.map = MapModel(mapSize, self.players[0], self.players[1])
         self.players[0].setMap(self.map)
         self.players[1].setMap(self.map)
