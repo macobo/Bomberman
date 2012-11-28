@@ -32,9 +32,12 @@ class Main(object):
         t = self.clock.tick(50)
         self.game.processEvents(t)
         if self.game.update(t, False) and not self.game.map.thingsLeft():
+            self.panel.fade(1500)
             for player in self.game.players:
                 player.toNeutralCorner()
             self.game.map.resetMap(regen = True)
+            self.game.redraw(update = False)
+            self.panel.fade(1500, reverse = True)
         self.panel.update()
         return t
             

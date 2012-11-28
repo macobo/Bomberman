@@ -35,6 +35,6 @@ COMMENTS = [
 
 SUICIDECOMMENTS = [
     "Oih!",
-    "See veel puudus!",
+    "See veel puudus",
     "Nojah siis"
 ]

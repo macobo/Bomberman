@@ -62,7 +62,7 @@ class PanelDrawer(object):
         self.getScreen().blit(rendered, (x-textWidth//2, y))
         
     def winScreen(self, urmasLoses, katrinLoses):
-        darken(3000)
+        self.fade(3000)
         h = self.font.size("U")[1]
         self.urmas.wRect = self.urmas.rect.move(self.boardSize//2-30, -h+30)
         self.katrin.wRect = self.katrin.rect.move(-self.boardSize//2+30, -h+30)
@@ -78,7 +78,7 @@ class PanelDrawer(object):
             self.katrin.stateCallback = lambda: SAD
             self.urmas.stateCallback = lambda: HAPPY
             self.showWinScreen("Urmas on stuudio valitseja!")
-        darken(3000, reverse = True)
+        self.fade(3000, reverse = True)
         
     def showWinScreen(self, winText):
         if not hasattr(self, "winimage"):
@@ -92,6 +92,19 @@ class PanelDrawer(object):
             face.update()
             self.screen.blit(face.image, face.wRect)
         #pygame.display.flip()
+        
+    def fade(self, time, reverse = False):
+        dimmer = Dimmer()
+        clock = pygame.time.Clock()
+        t = 0
+        while t < time:
+            t += clock.tick(50)
+            if not reverse:
+                dimmer.darken(1.0 * t / time)
+            else:
+                dimmer.darken(1 - 1.0 * t / time)
+            pygame.display.flip()
+            dimmer.restore()
         
 class Dimmer(object):
     darken_factor = 250
@@ -118,18 +131,7 @@ class Dimmer(object):
         self.buffer = None
         
 
-def darken(time, reverse = False):
-    dimmer = Dimmer()
-    clock = pygame.time.Clock()
-    t = 0
-    while t < time:
-        t += clock.tick(50)
-        if not reverse:
-            dimmer.darken(1.0 * t / time)
-        else:
-            dimmer.darken(1 - 1.0 * t / time)
-        pygame.display.flip()
-        dimmer.restore()
+
         
     
 def getScaledCenteredImage(path, width, height):
