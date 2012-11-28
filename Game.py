@@ -13,7 +13,7 @@ class Game:
     def __init__(self, screen, squareSize = 30, mapSize = 20, drawerParams={}):
         self.screen = screen
         self.players = [Player(Objects.Player1, 0, 0), 
-                        Player(Objects.Player1, mapSize-1, mapSize-1)]
+                        Player(Objects.Player2, mapSize-1, mapSize-1)]
         self.map = MapModel(mapSize, self.players[0], self.players[1])
         self.players[0].setMap(self.map)
         self.players[1].setMap(self.map)
@@ -28,10 +28,10 @@ class Game:
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit(0)
-            if event.type == KEYDOWN and event.key == K_t:
-                print("CHEAT")
-                Objects.BombBonus.collectBy(self.player1)
-                Objects.Pepper.collectBy(self.player1)
+            #if event.type == KEYDOWN and event.key == K_t:
+            #    print("CHEAT")
+            #    Objects.BombBonus.collectBy(self.player[0])
+            #    Objects.Pepper.collectBy(self.player[0])
         self.handleKeys(self.players[0], t, P1_KEYS)
         self.handleKeys(self.players[1], t, P2_KEYS)
             

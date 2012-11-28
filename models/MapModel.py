@@ -41,8 +41,10 @@ class MapModel(object):
             placed = 0
             while placed < obj.amount(self.size):
                 (x, y) = random.randrange(self.size), random.randrange(self.size)
+                here = self.objectsAt((x,y))
                 canPlace = (x, y) not in self.map
-                canPlace = canPlace or all(obj.canGoUnder(x) for x in self.map[x,y])
+                canPlace = canPlace or all(obj.canGoUnder(x) for x in here)
+                canPlace = canPlace and (not obj.collectable or (bool(here) and all(x.fragile for x in here)))
                 if canPlace:
                     self.add(obj, (x,y))
                     placed += 1

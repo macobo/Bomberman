@@ -10,7 +10,7 @@ from pygame.locals import *
 sys.path.append(".")
 
 class Main(object):
-    PANELWIDTH = 130
+    PANELWIDTH = 160
     def __init__(self, squareSize, mapSize):
         self.squareSize = squareSize
         self.mapSize = mapSize
