@@ -4,9 +4,9 @@ import pygame, sys
 sys.path.append(".")
 from misc import *
 from drawers.Face import Face
+from Fade import fade
 
 class PanelDrawer(object):
-
     def __init__(self, panelSize, boardSize):
         self.panelSize = panelSize
         self.boardSize = boardSize
@@ -15,12 +15,11 @@ class PanelDrawer(object):
         self.smallfont = pygame.font.Font(fontPath, 20)
         
     def createFaces(self, map):
-        self.writeCentered("Urmas", (self.panelSize//2, 0), self.font)
+        self.writeNames()
         self.h = self.font.size("U")[1]
         self.urmas = Face(URMASPICS, (0,self.h,
                                       self.panelSize,self.panelSize), 
                            map.players[0])
-        self.writeCentered("Katrin", (3*self.panelSize//2+self.boardSize, 0), self.font)
         self.katrin = Face(KATRINPICS, (self.panelSize+self.boardSize,self.h,
                                         self.panelSize,self.panelSize), 
                            map.players[1])
@@ -28,6 +27,10 @@ class PanelDrawer(object):
         self.faces = [(self.urmas, (0, 0)),
                       (self.katrin, (self.panelSize+self.boardSize, 0))]
         self.h += self.katrin.image.get_height()
+        
+    def writeNames(self):
+        self.writeCentered("Urmas", (self.panelSize//2, 0), self.font)
+        self.writeCentered("Katrin", (3*self.panelSize//2+self.boardSize, 0), self.font)
         
     def getScreen(self):
         if not hasattr(self, "screen"):
@@ -62,7 +65,7 @@ class PanelDrawer(object):
         self.getScreen().blit(rendered, (x-textWidth//2, y))
         
     def winScreen(self, urmasLoses, katrinLoses):
-        self.fade(3000)
+        fade(3000)
         h = self.font.size("U")[1]
         self.urmas.wRect = self.urmas.rect.move(self.boardSize//2-30, -h+30)
         self.katrin.wRect = self.katrin.rect.move(-self.boardSize//2+30, -h+30)
@@ -78,7 +81,7 @@ class PanelDrawer(object):
             self.katrin.stateCallback = lambda: SAD
             self.urmas.stateCallback = lambda: HAPPY
             self.showWinScreen("Urmas on stuudio valitseja!")
-        self.fade(3000, reverse = True)
+        fade(3000, reverse = True)
         
     def showWinScreen(self, winText):
         if not hasattr(self, "winimage"):
@@ -93,45 +96,8 @@ class PanelDrawer(object):
             self.screen.blit(face.image, face.wRect)
         #pygame.display.flip()
         
-    def fade(self, time, reverse = False):
-        dimmer = Dimmer()
-        clock = pygame.time.Clock()
-        t = 0
-        while t < time:
-            t += clock.tick(50)
-            if not reverse:
-                dimmer.darken(1.0 * t / time)
-            else:
-                dimmer.darken(1 - 1.0 * t / time)
-            pygame.display.flip()
-            dimmer.restore()
-        
-class Dimmer(object):
-    darken_factor = 250
-    filter = (0,0,0)
-    def darken(self, factor):
-        #print factor * self.darken_factor
-        screen = pygame.display.get_surface()
-        screensize = screen.get_size()
-        self.buffer = pygame.Surface(screensize)
-        self.buffer.blit(screen, (0,0)) # to restore later
-        darken=pygame.Surface(screensize)
-        darken.fill(self.filter)
-        darken.set_alpha(factor * self.darken_factor)
-        # safe old clipping rectangle...
-        old_clip = screen.get_clip()
-        # ..blit over entire screen...
-        screen.blit(darken, (0,0))
-        # ... and restore clipping
-        screen.set_clip(old_clip)
-##        pygame.display.flip()
-        
-    def restore(self):
-        pygame.display.get_surface().blit(self.buffer,(0,0))
-        self.buffer = None
-        
-
-
+    def screenSize(self):
+        return (self.boardSize + 2*self.panelSize, self.boardSize)
         
     
 def getScaledCenteredImage(path, width, height):
