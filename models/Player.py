@@ -20,13 +20,14 @@ class Player:
         self.lives = 4
         self.dead = False
         self.lastKill = self.LASTKILLTIME
+        self.speed = 0.005
+        self.bombRadius = 2
+        self.bombs = 2
         self.reset()
         
     def reset(self):
         self.vx = self.vy = 0
-        self.speed = 0.005
-        self.bombRadius = 2
-        self.bombs = 1
+
         self.placed = 0
         
     def canPlaceBomb(self):
@@ -39,10 +40,11 @@ class Player:
         self.placed = min(1, self.placed-1) # can occur when you die
         
     def die(self):
-        self.dead = True
-        self.lives -= 1
-        self.reset()
-        self.deadTime = 0
+        if not self.dead:
+            self.dead = True
+            self.lives -= 1
+            self.reset()
+            self.deadTime = 0
     
     def setMap(self, mapModel):
         self.map = mapModel

@@ -46,7 +46,7 @@ class Collectable(Tile):
         return cls.fragile and not isinstance(cls, Player)
         
 Rock = Tile(os.path.join(tileFolder,"rock.png"), fragile=True, amount=lambda s:3*s)
-Beam = Tile(imagePath = os.path.join(tileFolder,"beam.png"), amount=lambda s:4*s)
+Beam = Tile(imagePath = os.path.join(tileFolder,"beam.png"), amount=lambda s:4 *s)
     
 class TileConstructor(Tile):
     def __init__(self, imageName):

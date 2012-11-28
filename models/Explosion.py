@@ -4,12 +4,17 @@ from Objects import ExplosionTile, Tile
 from Player import Player
 
 class Explosion(Tile):
+    CHAINTIME = 100
     EXPLOSIONTIME = 700
     def __init__(self, bomb, map):
         Tile.__init__(self, None, solid = False)
         x, y = bomb.getPos()
         self.affected = calculateAffected(bomb, map)
         self.time = 0
+        
+    def affects(self, bomb):
+        xy = bomb.getRoundPos()   
+        return xy in self.getAffected() and self.time >= self.CHAINTIME
         
     def getAffected(self):
         return self.affected

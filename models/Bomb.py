@@ -2,6 +2,7 @@
 
 from Objects import Tile, BombTile
 from Explosion import Explosion
+from Player import Player
 from misc import *
 
 class Bomb(Tile):
@@ -15,6 +16,9 @@ class Bomb(Tile):
         
     def getPos(self):
         return self.x, self.y
+        
+    def getRoundPos(self):
+        return Player.round(*self.getPos())
         
     def tick(self, t):
         " Returns true if bomb is ready to explode "

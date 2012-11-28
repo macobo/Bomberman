@@ -60,9 +60,18 @@ class MapModel(object):
         return filter(lambda p: p.getRoundCoordinate()==xy, self.players)
         
     def update(self, t):
+        for explosion in self.explosions[:]:
+            for bomb in self.bombs:
+                if explosion.affects(bomb):
+                    self.explode(bomb)
+            if explosion.tick(t):
+                self.explosions.remove(explosion)
+                
         for player in self.players:
             player.tick(t)
             xy = player.getRoundCoordinate()
+            if any(xy in exp.getAffected() for exp in self.explosions):
+                player.die()
             if xy not in self.map: continue
             for collectable in filter(lambda x: x.collectable, self.map[xy]):
                 collectable.collectBy(player)
@@ -72,9 +81,7 @@ class MapModel(object):
             if bomb.tick(t):
                 print "BOOM", bomb.time
                 self.explode(bomb)
-        for explosion in self.explosions[:]:
-            if explosion.tick(t):
-                self.explosions.remove(explosion)
+
         
     def move(self, player, t):
         """ Tries to move player and returns new coordinates for it """

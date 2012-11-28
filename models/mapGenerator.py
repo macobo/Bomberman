@@ -5,7 +5,7 @@ import random
 
 def tryPlace(map, obj):
     (x, y) = random.randrange(map.size), random.randrange(map.size)
-    for player in map. players:
+    for player in map.players:
         pxy = player.getRoundCoordinate()
         if (x,y) in neighbors(pxy, map.size) or (x,y) == pxy:
             return False
