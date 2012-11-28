@@ -3,6 +3,8 @@
 import pygame
 from Game import Game
 from drawers.PanelDrawer import PanelDrawer
+from drawers.TitleScreen import initScreen
+from drawers.Fade import fade
 import sys
 from misc import *
 from pygame.locals import *
@@ -19,7 +21,15 @@ class Main(object):
         self.game = Game(self.panel.getScreen(), self.squareSize, self.mapSize, {"start_x":self.PANELWIDTH})
         self.panel.createFaces(self.game.map)
         
+    def initScreen(self):
+        self.game.update(0, False)
+        self.panel.update(False)
+        lives = initScreen(*self.panel.screenSize())
+        print lives
+        
+        
     def mainloop(self):
+        self.panel.writeNames()
         self.clock = pygame.time.Clock()
         while not self.game.winners():
             self.tick()
@@ -32,16 +42,18 @@ class Main(object):
         t = self.clock.tick(50)
         self.game.processEvents(t)
         if self.game.update(t, False) and not self.game.map.thingsLeft():
-            self.panel.fade(1500)
+            fade(1500)
             for player in self.game.players:
                 player.toNeutralCorner()
             self.game.map.resetMap(regen = True)
             self.game.redraw(update = False)
-            self.panel.fade(1500, reverse = True)
+            fade(1500, reverse = True)
         self.panel.update()
         return t
             
 if __name__ == "__main__":
     pygame.init()
     pygame.display.set_caption("Pommimäng")
-    Main(25, 20).mainloop()
+    main = Main(25, 20)
+    main.initScreen()
+    main.mainloop()
