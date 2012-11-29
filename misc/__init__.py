@@ -25,6 +25,7 @@ KATRINPICS = {
 
 fontPath = join("resources", "fonts", "Jokerman.ttf")
 titleImagePath = join("resources", "images", "title.jpg")
+arrowImagePath = join("resources", "images", "nupud.gif")
 
 COMMENTS = [
     "Pihtas, põhjas",

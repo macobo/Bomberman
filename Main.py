@@ -25,7 +25,14 @@ class Main(object):
         self.game.update(0, False)
         self.panel.update(False)
         lives = initScreen(*self.panel.screenSize())
-        print lives
+        for player in self.game.players:
+            player.lives = lives
+        fade(1000)
+        self.panel.resetScreen()
+        self.panel.writeNames()
+        self.panel.update(flip = False)
+        self.game.redraw(update = False)
+        fade(2500, reverse = True)
         
         
     def mainloop(self):

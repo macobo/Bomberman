@@ -2,28 +2,50 @@
 from Fade import Dimmer
 import pygame
 from misc import *
+import sys
+
+white = (255,255,255)
+red = (255,0,0)
+def putCenter(surface, width, height):
+    w = surface.get_width()
+    pygame.display.get_surface().blit(surface, ((width-w)//2, height))
+    
+def centerPos(surface, width, height, quarter, quarters):
+    this = int(width / quarters * quarter)
+    return (this - surface.get_width()//2, height)
 
 def initScreen(width, height):
     dimmer = Dimmer()
     dimmer.darken(0.7)
-    
     font = pygame.font.Font(fontPath, 40)
-    colors = ((255,255,255),(255,0,0))
-    pos = ((0,0), (150,0), (300,0))
-    numbers = ["3", "8", "15"]
-    hoverable = []
-    screen = Dimmer()
-    for pos, state in zip(pos, numbers):
-        states = [font.render(state, True, col) for col in colors]
-        hoverable.append(Hoverable(pos, HAT_CENTERED, *states))
+    smallfont = pygame.font.Font(fontPath, 20)
+    putCenter(font.render("Pommim2ng", True, white), width, 20)
+    putCenter(smallfont.render("Pommi panekuks on CTRL nupp, juhtimiseks:", True, white), width, 90)
+    putCenter(smallfont.render("Vali, mitu elu teil on:", True, white), width, 320)
     
+    image = pygame.image.load(arrowImagePath).convert_alpha()    
+    putCenter(image, width, 100)
+    
+    colors = (white, red)
+    h = 380
+    
+    numbers = ["3", "8", "12", "20"]
+    hoverable = []
+    screenBackup = Dimmer()
+    for i,state in enumerate(numbers):
+        states = [font.render(state, True, col) for col in colors]
+        pos = centerPos(states[0], width, h, i+3, len(numbers)+5)
+        hoverable.append(Hoverable(pos, HAT_CENTERED, *states))
+        hoverable[-1].draw(0)
+    
+    pygame.display.flip()
     while True:
         for event in pygame.event.get():
-            if event.type == KEYDOWN and event.key == K_ESCAPE or event.type == QUIT:
+            if event.type == QUIT:
                 pygame.quit()
                 sys.exit(0)
             elif event.type == MOUSEMOTION:
-                screen.restore()
+                screenBackup.restore()
                 pos = pygame.mouse.get_pos()
                 for hov in hoverable:
                     if pos in hov:
@@ -34,7 +56,7 @@ def initScreen(width, height):
             elif event.type == MOUSEBUTTONDOWN:
                 for number, hov in zip(numbers, hoverable):
                     if pos in hov:
-                        dimmer.restore()
+                        #dimmer.restore()
                         return int(number)
     
 class Hoverable(object):

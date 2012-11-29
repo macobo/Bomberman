@@ -72,7 +72,7 @@ class PanelDrawer(object):
         if urmasLoses and katrinLoses:
             self.katrin.stateCallback = lambda: SAD
             self.urmas.stateCallback = lambda: SAD
-            self.showWinScreen("Viik oli. :(")
+            self.showWinScreen("Viiki j2i. :)")
         elif urmasLoses:
             self.katrin.stateCallback = lambda: HAPPY
             self.urmas.stateCallback = lambda: SAD
@@ -95,6 +95,12 @@ class PanelDrawer(object):
             face.update()
             self.screen.blit(face.image, face.wRect)
         #pygame.display.flip()
+        
+    def resetScreen(self):
+        screensize = self.screen.get_size()
+        darken=pygame.Surface(screensize)
+        darken.fill((0,0,0))
+        self.screen.blit(darken,(0,0))
         
     def screenSize(self):
         return (self.boardSize + 2*self.panelSize, self.boardSize)
