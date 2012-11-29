@@ -55,6 +55,7 @@ class Main(object):
             self.game.map.resetMap(regen = True)
             self.game.redraw(update = False)
             fade(1500, reverse = True)
+            self.clock.tick(100)
         self.panel.update()
         return t
             

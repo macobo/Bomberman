@@ -27,7 +27,7 @@ def initScreen(width, height):
     putCenter(image, width, 100)
     
     colors = (white, red)
-    h = 380
+    h = 360
     
     numbers = ["3", "8", "12", "20"]
     hoverable = []

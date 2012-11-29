@@ -11,6 +11,10 @@ class Player:
     statusTuple = namedtuple("Status", ["speed", "bombs", "bombRadius", "lives", "comment"])
     solid = True
     collectable = False
+    STARTSPEED = 0.005
+    STARTRADIUS = 2
+    STARTBOMBS = 2
+    SPEEDINCCONSTANT = 1.3
     
     def __init__(self, tile, x, y):
         self.neutral_x = x
@@ -18,7 +22,7 @@ class Player:
         self.x, self.y = x, y
         self.tile = tile
         self.direction = NORTH
-        self.lives = 4
+        self.lives = 1000
         self.dead = False
         self.speed = 0.005
         self.bombRadius = 2
@@ -52,6 +56,9 @@ class Player:
         if not self.dead:
             self.dead = True
             self.lives -= 1
+            self.bombs = max(self.STARTBOMBS, self.bombs - 1)
+            self.bombRadius = max(self.STARTRADIUS, self.bombRadius - 1)
+            self.speed = max(self.STARTSPEED, self.speed / self.SPEEDINCCONSTANT)
             self.reset()
             return True
         return False

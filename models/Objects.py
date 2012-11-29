@@ -94,7 +94,7 @@ def bombCollect(player):
 BombBonus = Collectable(os.path.join(tileFolder,"bombBonus.png"), bombCollect, lambda s: 5)
 
 def collectCoffee(player):
-    player.speed = min(0.0125, player.speed * 1.3)
+    player.speed = min(0.0125, player.speed * player.SPEEDINCCONSTANT)
     player.resetBonusCounter()
 Coffee = Collectable(os.path.join(tileFolder,"coffee.png"), collectCoffee, lambda s: 3)    
     
