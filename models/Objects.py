@@ -79,7 +79,7 @@ class Player(Tile):
         return self.images[direction]
         
 
-BombTile = Tile(os.path.join(tileFolder,"Bomb.png"))
+BombTile = Tile(os.path.join(tileFolder,"bomb.png"))
 ExplosionTile = Tile(os.path.join(tileFolder,"explosion.png"))
 Background = Tile(os.path.join("resources","images","background.png"))
 
